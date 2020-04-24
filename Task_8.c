@@ -183,9 +183,48 @@ int Delete_Segment(Segment** Previous_Pointer){
             printf("Error: wrong number of segment to delete\n");
             exit(-2);
         }
-        (*Previous_Pointer) = NULL;
-        printf("You deleted the last segment. Execution complete.\n");
-        exit(0);
+       Last_Node = (Segment*)malloc(sizeof(Segment));
+        Last_Node->pointer = NULL;
+        printf("If you want to add a segment, enter '1', to delete a segment - '2', to end execution of the program - '3': ");
+        scanf("%d", &status);
+        if (status == 3){
+            printf("Executing complete\n");
+            exit(0);
+        }
+        if (status == 2){
+            printf("Error: nothing more to delete\n");
+            exit(-5);
+        }
+        if (status == 1){
+            printf("Enter coordinates of the current segment: ");
+            printf("x_1: ");
+            if (scanf("%g", &tmp_x_beg) == 0){
+                printf("Error: wrong input\n");
+                exit(-1);
+            }
+            printf("y_1: ");
+            if (scanf("%g", & tmp_y_beg) == 0){
+                printf("Error: wrong input\n");
+                exit(-1);
+            }
+            printf("x_2: ");
+            if (scanf("%g", &tmp_y_beg) == 0){
+                printf("Error: wrong input\n");
+                exit(-1);
+            }
+            printf("y_2: ");
+            if (scanf("%g", &tmp_y_end) == 0){
+                printf("Error: wrong input\n");
+                exit(-1);
+            }
+            Last_Node->x_beg = tmp_x_beg;
+            Last_Node->y_beg = tmp_y_beg;
+            Last_Node->x_end = tmp_x_end;
+            Last_Node->y_end = tmp_y_end;
+
+            (*Previous_Pointer) = Last_Node;
+            printf("New segment created\n");
+        }
     }
     return 0;
 }
