@@ -18,7 +18,7 @@ int init(Segment* Root_node);
 int init(Segment* Root_node){
 
     float root_x_beg, root_y_beg, root_x_end, root_y_end;
-    printf("Initializing list with a root node, enter 4 coordinates of the first segment: \n");
+    printf("Enter 4 coordinates of the first segment: \n");
     printf("x_1: ");
     if (scanf("%g", &root_x_beg) == 0){
         printf("Error: wrong input\n");
