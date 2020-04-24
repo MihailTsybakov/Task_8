@@ -210,7 +210,7 @@ int Delete_Segment(Segment** Previous_Pointer){
                 exit(-1);
             }
             printf("x_2: ");
-            if (scanf("%g", &tmp_y_beg) == 0){
+            if (scanf("%g", &tmp_x_end) == 0){
                 printf("Error: wrong input\n");
                 exit(-1);
             }
