@@ -3,7 +3,7 @@
 
 //Error codes| "-1" - wrong input, "-2" - wrong number to delete, "-3" - dot in input
 //Error codes| "-4" - unknown status, "-5" - invalid number to delete,
-//Error codes|  "-7" - Internal error (In Test)
+//Error codes|  "-7" - Internal error (In Test), "-8" - Autotest not passed
 
 typedef
 struct Segment_{
@@ -399,7 +399,7 @@ int Autotest_Counter(void){
     Segment* Test_Pointer;
     int test_number = 0;
 
-    test_file = fopen("C:\\Users\\mihai\\Desktop\\progy\\test.txt","r");
+    test_file = fopen("test.txt","r");
     if (!test_file){
         printf("Error: cannot open autotest file\n");
         exit(-9);
@@ -434,7 +434,7 @@ int Autotest_Intersections(void){
     Segment* Test_Pointer;
     int number_of_segments = 0;
 
-    test_file = fopen("C:\\Users\\mihai\\Desktop\\progy\\test.txt","r");
+    test_file = fopen("test.txt","r");
     if (!test_file){
         printf("Error: cannot open autotest file\n");
         exit(-9);
