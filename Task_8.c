@@ -138,10 +138,12 @@ int Count(Segment* Previous_Pointer){
 
 int Delete_Segment(Segment** Previous_Pointer);
 int Delete_Segment(Segment** Previous_Pointer){
-    int delete_number, number_of_segments;
+    int delete_number, number_of_segments, status;
+    float tmp_x_beg, tmp_y_beg, tmp_x_end, tmp_y_end;
     Segment* Pointer_to_node;
     Segment* Pointer_from_node;
     Segment* Pointer_to_previous;
+    Segment* Last_Node;
 
     number_of_segments = Count(*Previous_Pointer);
     if (number_of_segments == 0){
@@ -183,7 +185,7 @@ int Delete_Segment(Segment** Previous_Pointer){
             printf("Error: wrong number of segment to delete\n");
             exit(-2);
         }
-       Last_Node = (Segment*)malloc(sizeof(Segment));
+        Last_Node = (Segment*)malloc(sizeof(Segment));
         Last_Node->pointer = NULL;
         printf("If you want to add a segment, enter '1', to delete a segment - '2', to end execution of the program - '3': ");
         scanf("%d", &status);
