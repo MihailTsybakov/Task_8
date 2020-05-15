@@ -3,7 +3,7 @@
 
 //Error codes| "-1" - wrong input, "-2" - wrong number to delete, "-3" - dot in input
 //Error codes| "-4" - unknown status, "-5" - invalid number to delete,
-//Error codes|  "-7" - Internal error (In Test), "-8" - Autotest not passed
+//Error codes|  "-7" - Internal error (In Test)
 
 typedef
 struct Segment_{
@@ -18,7 +18,7 @@ int init(Segment* Root_node);
 int init(Segment* Root_node){
 
     float root_x_beg, root_y_beg, root_x_end, root_y_end;
-    printf("Enter 4 coordinates of the first segment: \n");
+    printf("Initializing list with a root node, enter 4 coordinates of the first segment: \n");
     printf("x_1: ");
     if (scanf("%g", &root_x_beg) == 0){
         printf("Error: wrong input\n");
@@ -53,7 +53,7 @@ int Input(Segment** Previous_pointer);
 int Input(Segment** Previous_pointer){
 
     Segment* Temp_Node;
-    float tmp_x_beg, tmp_y_beg, tmp_x_end, tmp_y_end;
+    float tmp_x_beg, tmp_y_beg, tmp_x_end, tmp_y_end, compare_temp;
 
     Temp_Node = (Segment*)malloc(sizeof(Segment));
     printf("Enter coordinates of current segment: \n");
@@ -81,6 +81,23 @@ int Input(Segment** Previous_pointer){
     if ((tmp_x_beg == tmp_x_end)&&(tmp_y_beg == tmp_y_end)){
         printf("Error: it's a dot, not a segment\n");
         exit(-3);
+    }
+    // Just changing names of dots if needed
+    if (tmp_x_beg > tmp_x_end){
+        compare_temp = tmp_x_beg;
+        tmp_x_beg = tmp_x_end;
+        tmp_x_end = compare_temp;
+        compare_temp = tmp_y_beg;
+        tmp_y_beg = tmp_y_end;
+        tmp_y_end = compare_temp;
+    }
+    if ((tmp_x_beg == tmp_x_end) && (tmp_y_beg > tmp_y_end)){
+        compare_temp = tmp_x_beg;
+        tmp_x_beg = tmp_x_end;
+        tmp_x_end = compare_temp;
+        compare_temp = tmp_y_beg;
+        tmp_y_beg = tmp_y_end;
+        tmp_y_end = compare_temp;
     }
     Temp_Node->x_beg = tmp_x_beg;
     Temp_Node->y_beg = tmp_y_beg;
@@ -122,6 +139,9 @@ int Count(Segment* Previous_Pointer){
     Segment* Pointer_to_previous_node;
 
     Pointer_to_node = Previous_Pointer;
+    if (Previous_Pointer == NULL){
+        return 0;
+    }
     Pointer_from_node = Pointer_to_node->pointer;
     Pointer_to_previous_node = NULL;
     while(1){
@@ -136,100 +156,257 @@ int Count(Segment* Previous_Pointer){
     return number_of_nodes;
 }
 
+
 int Delete_Segment(Segment** Previous_Pointer);
 int Delete_Segment(Segment** Previous_Pointer){
-    int delete_number, number_of_segments, status;
+    float del_x_1, del_y_1, del_x_2, del_y_2, k, b, compare_temp;
+    float tmp_x_1, tmp_y_1, tmp_x_2, tmp_y_2;
     float tmp_x_beg, tmp_y_beg, tmp_x_end, tmp_y_end;
+    int iterations = 0, number_of_segms = 0;
     Segment* Pointer_to_node;
     Segment* Pointer_from_node;
-    Segment* Pointer_to_previous;
-    Segment* Last_Node;
+    Segment* Pointer_to_previous_node = NULL;
+    Segment* Serv_Segment = NULL;
+    Segment* Serv_Segment_2 = NULL;
 
-    number_of_segments = Count(*Previous_Pointer);
-    if (number_of_segments == 0){
-        printf("Error: there are no segments to delete\n");
+    Pointer_to_node = (*Previous_Pointer);
+    Pointer_from_node = Pointer_to_node->pointer;
+    Pointer_to_previous_node = (*Previous_Pointer);
+
+    printf("Enter coordinates of segment to delete: \n");
+    printf("x_1: ");
+    if (scanf("%g", &del_x_1) == 0){
+        printf("Error: wrong input\n");
+        exit(-1);
     }
-    if (number_of_segments > 0){
-        Chain_Printer(*Previous_Pointer);
-        printf("Enter a number of segment which you want to delete: ");
-        scanf("%d", &delete_number);
+    printf("y_1: ");
+    if (scanf("%g", &del_y_1) == 0){
+        printf("Error: wrong input\n");
+        exit(-1);
     }
-    if (delete_number < 1){
-        printf("Error: invalid number of segment to delete\n");
-        exit(-5);
+    printf("x_2: ");
+    if (scanf("%g", &del_x_2) == 0){
+        printf("Error: wrong input\n");
+        exit(-1);
     }
-    if (number_of_segments > 0){
-        (Pointer_to_node) = (*Previous_Pointer);
-        (Pointer_from_node) = Pointer_to_node->pointer;
-        Pointer_to_previous = NULL;
+    printf("y_2: ");
+    if (scanf("%g", &del_y_2) == 0){
+        printf("Error: wrong input\n");
+        exit(-1);
     }
-    if (number_of_segments > 1){
-        if (delete_number != 1){
-            for (int index = 0; index < (delete_number - 1); index++){
-                Pointer_to_previous = Pointer_to_node;
-                Pointer_to_node = Pointer_from_node;
-                Pointer_from_node = Pointer_to_node->pointer;
-                if ((index != delete_number-2)&&(Pointer_from_node == NULL)){
-                    printf("Error: number of segment is out of range\n");
-                    exit(-2);
+    if ((del_x_1 == del_x_2) && (del_y_1 == del_y_2)){
+        printf("Error: it's a dot\n");
+        exit(-1);
+    }
+    // Just changing names of dots if needed
+    if (del_x_1 > del_x_2){
+        compare_temp = del_x_1;
+        del_x_1 = del_x_2;
+        del_x_2 = compare_temp;
+        compare_temp = del_y_1;
+        del_y_1 = del_y_2;
+        del_y_2 = compare_temp;
+    }
+    if ((del_x_1 == del_x_2) && (del_y_1 > del_y_2)){
+        compare_temp = del_x_1;
+        del_x_1 = del_x_2;
+        del_x_2 = compare_temp;
+        compare_temp = del_y_1;
+        del_y_1 = del_y_2;
+        del_y_2 = compare_temp;
+    }
+
+    if (del_x_1 != del_x_2){
+        k = (del_y_1 - del_y_2)/(del_x_1 - del_x_2);
+        b = del_y_1 - k*del_x_1;
+        while(1){
+            iterations++;
+            tmp_x_1 = Pointer_to_node->x_beg;
+            tmp_y_1 = Pointer_to_node->y_beg;
+            tmp_x_2 = Pointer_to_node->x_end;
+            tmp_y_2 = Pointer_to_node->y_end;
+
+            //Checking if current segment is included in the line created by segment to delete
+
+            if ((tmp_y_1 == (k*tmp_x_1 + b)) && (tmp_y_2 == (k*tmp_x_2 + b))){
+                // I. Segment-eraser lies inside the current segment:
+                if ((tmp_x_1 < del_x_1) && (tmp_x_2 > del_x_2)){
+                    if (iterations == 1){
+                        (*Previous_Pointer) = Pointer_to_node->pointer;
+                    }
+                    else{
+                        Pointer_to_previous_node->pointer = Pointer_from_node;
+                    }
+                    Serv_Segment = (Segment*)malloc(1*sizeof(Segment));
+                    Serv_Segment->x_beg = tmp_x_1;
+                    Serv_Segment->y_beg = tmp_y_1;
+                    Serv_Segment->x_end = del_x_1;
+                    Serv_Segment->y_end = del_y_1;
+                    Serv_Segment->pointer = (*Previous_Pointer);
+                    (*Previous_Pointer) = Serv_Segment;
+                    Serv_Segment_2 = (Segment*)malloc(1*sizeof(Segment));
+                    Serv_Segment_2->x_beg = del_x_2;
+                    Serv_Segment_2->y_beg = del_y_2;
+                    Serv_Segment_2->x_end = tmp_x_2;
+                    Serv_Segment_2->y_end = tmp_y_2;
+                    Serv_Segment_2->pointer = (*Previous_Pointer);
+                    (*Previous_Pointer) = Serv_Segment_2;
+                }
+                // II. Segment-eraser contains current segment:
+                if ((tmp_x_1 >= del_x_1) && (tmp_x_2 <= del_x_2)){
+                    number_of_segms = Count(*Previous_Pointer);
+                    if (number_of_segms == 1){
+                        //(*Previous_Pointer) = NULL;
+
+                        printf("Enter coordinates of current segment: \n");
+                        printf("x_1: ");
+                        if (scanf("%g", &tmp_x_beg) == 0){
+                            printf("Error: wrong input\n");
+                            exit(-1);
+                        }
+                        printf("y_1: ");
+                        if (scanf("%g", &tmp_y_beg) == 0){
+                            printf("Error: wrong input\n");
+                            exit(-1);
+                        }
+                        printf("x_2: ");
+                        if (scanf("%g", &tmp_x_end) == 0){
+                            printf("Error: wrong input\n");
+                            exit(-1);
+                        }
+                        printf("y_2: ");
+                        if (scanf("%g", &tmp_y_end) == 0){
+                            printf("Error: wrong input\n");
+                            exit(-1);
+                        }
+                        Serv_Segment = (Segment*)malloc(sizeof(Segment));
+                        Serv_Segment->x_beg = tmp_x_beg;
+                        Serv_Segment->y_beg = tmp_y_beg;
+                        Serv_Segment->x_end = tmp_x_end;
+                        Serv_Segment->y_end = tmp_y_end;
+                        Serv_Segment->pointer = NULL;
+                        (*Previous_Pointer) = Serv_Segment;
+                    }
+                    if (iterations != 1){
+                        Pointer_to_previous_node->pointer = Pointer_from_node;
+                    }
+                    if ((iterations == 1)&& (number_of_segms != 1)){
+                        (*Previous_Pointer) = Pointer_to_node->pointer;
+                    }
+                }
+                // III. Segment-eraser touches current segment by left side:
+                if ((del_x_2 > tmp_x_1) && (del_x_1 < tmp_x_1)){
+                    Pointer_to_node->x_beg = del_x_2;
+                    Pointer_to_node->y_beg = del_y_2;
+                }
+                // IV. Segment-eraser touches current segment by right side:
+                if ((del_x_1 < tmp_x_2) && (del_x_2 > tmp_x_2)){
+                    Pointer_to_node->x_end = del_x_1;
+                    Pointer_to_node->y_end = del_y_1;
                 }
             }
-            Pointer_to_previous->pointer = Pointer_from_node;
-        }
-        if (delete_number == 1){
-            (*Previous_Pointer) = (*Previous_Pointer)->pointer;
+            if (Pointer_from_node == NULL){
+                break;
+            }
+            Pointer_to_previous_node = Pointer_to_node;
+            Pointer_to_node = Pointer_from_node;
+            Pointer_from_node = Pointer_to_node->pointer;
         }
     }
-    if (number_of_segments == 1){
-        if (delete_number != 1){
-            printf("Error: wrong number of segment to delete\n");
-            exit(-2);
-        }
-        Last_Node = (Segment*)malloc(sizeof(Segment));
-        Last_Node->pointer = NULL;
-        printf("If you want to add a segment, enter '1', to delete a segment - '2', to end execution of the program - '3': ");
-        scanf("%d", &status);
-        if (status == 3){
-            printf("Executing complete\n");
-            exit(0);
-        }
-        if (status == 2){
-            printf("Error: nothing more to delete\n");
-            exit(-5);
-        }
-        if (status == 1){
-            printf("Enter coordinates of the current segment: ");
-            printf("x_1: ");
-            if (scanf("%g", &tmp_x_beg) == 0){
-                printf("Error: wrong input\n");
-                exit(-1);
-            }
-            printf("y_1: ");
-            if (scanf("%g", & tmp_y_beg) == 0){
-                printf("Error: wrong input\n");
-                exit(-1);
-            }
-            printf("x_2: ");
-            if (scanf("%g", &tmp_x_end) == 0){
-                printf("Error: wrong input\n");
-                exit(-1);
-            }
-            printf("y_2: ");
-            if (scanf("%g", &tmp_y_end) == 0){
-                printf("Error: wrong input\n");
-                exit(-1);
-            }
-            Last_Node->x_beg = tmp_x_beg;
-            Last_Node->y_beg = tmp_y_beg;
-            Last_Node->x_end = tmp_x_end;
-            Last_Node->y_end = tmp_y_end;
+    if (del_x_1 == del_x_2){
+        while (1){
+            iterations++;
+            tmp_x_1 = Pointer_to_node->x_beg;
+            tmp_y_1 = Pointer_to_node->y_beg;
+            tmp_x_2 = Pointer_to_node->x_end;
+            tmp_y_2 = Pointer_to_node->y_end;
 
-            (*Previous_Pointer) = Last_Node;
-            printf("New segment created\n");
+            //Checking if current segment lies inside the line created by segment-eraser:
+            if ((tmp_x_1 == del_x_1) && (tmp_x_2 == del_x_2)){
+                // I. Segment-eraser lies inside current segment:
+                if((del_y_1 > tmp_y_1) && (del_y_2 < tmp_y_2)){
+                    if (iterations == 1){
+                        (*Previous_Pointer) = Pointer_to_node->pointer;
+                    }
+                    else{
+                        Pointer_to_previous_node->pointer = Pointer_from_node;
+                    }
+                    Serv_Segment = (Segment*)malloc(sizeof(Segment));
+                    Serv_Segment->x_beg = del_x_1;
+                    Serv_Segment->y_beg = tmp_y_1;
+                    Serv_Segment->x_end = del_x_1;
+                    Serv_Segment->y_end = del_y_1;
+                    Serv_Segment->pointer = (*Previous_Pointer);
+                    (*Previous_Pointer) = Serv_Segment;
+                    Serv_Segment_2 = (Segment*)malloc(sizeof(Segment));
+                    Serv_Segment_2->x_beg = del_x_1;
+                    Serv_Segment_2->y_beg = del_y_2;
+                    Serv_Segment_2->x_end = del_x_1;
+                    Serv_Segment_2->y_end = tmp_y_2;
+                    Serv_Segment_2->pointer = (*Previous_Pointer);
+                    (*Previous_Pointer) = Serv_Segment_2;
+                }
+                // II. Segment-eraser contains current segment
+                if ((del_y_1 <= tmp_y_1) && (del_y_2 >= tmp_y_2)){
+                    if (number_of_segms == 1){
+                        (*Previous_Pointer) = NULL;
+
+                        printf("Enter coordinates of current segment: \n");
+                        printf("x_1: ");
+                        if (scanf("%g", &tmp_x_beg) == 0){
+                            printf("Error: wrong input\n");
+                            exit(-1);
+                        }
+                        printf("y_1: ");
+                        if (scanf("%g", &tmp_y_beg) == 0){
+                            printf("Error: wrong input\n");
+                            exit(-1);
+                        }
+                        printf("x_2: ");
+                        if (scanf("%g", &tmp_x_end) == 0){
+                            printf("Error: wrong input\n");
+                            exit(-1);
+                        }
+                        printf("y_2: ");
+                        if (scanf("%g", &tmp_y_end) == 0){
+                            printf("Error: wrong input\n");
+                            exit(-1);
+                        }
+                        Serv_Segment = (Segment*)malloc(sizeof(Segment));
+                        Serv_Segment->x_beg = tmp_x_beg;
+                        Serv_Segment->y_beg = tmp_y_beg;
+                        Serv_Segment->x_end = tmp_x_end;
+                        Serv_Segment->y_end = tmp_y_end;
+                        Serv_Segment->pointer = NULL;
+                        (*Previous_Pointer) = Serv_Segment;
+                    }
+                    if ((iterations == 1)&&(number_of_segms != 1)){
+                        (*Previous_Pointer) = Pointer_to_node->pointer;
+                    }
+                    else{
+                        Pointer_to_previous_node->pointer = Pointer_from_node;
+                    }
+                }
+                // III. Segment-eraser touches current segment by lower side
+                if ((del_y_2 > tmp_y_1) && (del_y_1 < tmp_y_1)){
+                    Pointer_to_node->y_beg = del_y_2;
+                }
+                // IV. Segment-eraser touches current segment by the upper side
+                if ((del_y_1 < tmp_y_2) && (del_y_2 > tmp_y_2)){
+                    Pointer_to_node->y_end = del_y_1;
+                }
+            }
+            if (Pointer_from_node == NULL){
+                break;
+            }
+            Pointer_to_previous_node = Pointer_to_node;
+            Pointer_to_node = Pointer_from_node;
+            Pointer_from_node = Pointer_to_node->pointer;
         }
     }
     return 0;
 }
+
 
 int Intersections(Segment** Previous_Pointer, int print_code);
 int Intersections(Segment** Previous_Pointer, int print_code){
@@ -302,7 +479,7 @@ int Intersections(Segment** Previous_Pointer, int print_code){
                 if ((tmp_x_1 >= x_1)&&(tmp_x_2 <= x_2)){
                     Pointer_to_previous_node->pointer = Pointer_from_node;
                     if (print_code == 1){
-                        printf("Some segment lied inside inputted\n");
+                        //printf("Some segment lied inside inputted\n");
                     }
 
                 }
@@ -310,7 +487,7 @@ int Intersections(Segment** Previous_Pointer, int print_code){
                 if ((tmp_x_1 <= x_1)&&(tmp_x_2 >= x_2)){
                     (*Previous_Pointer) = (*Previous_Pointer)->pointer;
                     if (print_code == 1){
-                        printf("Inputted segment lied inside one of the previous segments\n");
+                        //printf("Inputted segment lied inside one of the previous segments\n");
                     }
                 }
                 // III. if current segment touches inputted segment by the left side:
@@ -319,7 +496,7 @@ int Intersections(Segment** Previous_Pointer, int print_code){
                     (*Previous_Pointer)->y_beg = tmp_y_1;
                     Pointer_to_previous_node->pointer = Pointer_from_node;
                     if (print_code == 1){
-                        printf("Some segment touched inputted segment by the left side\n");
+                        //printf("Some segment touched inputted segment by the left side\n");
                     }
                 }
                 // IV. if current segment touches inputted segment by the right side:
@@ -328,7 +505,7 @@ int Intersections(Segment** Previous_Pointer, int print_code){
                     (*Previous_Pointer)->y_end = tmp_y_2;
                     Pointer_to_previous_node->pointer = Pointer_from_node;
                     if (print_code == 1){
-                        printf("Some segment touched inputted segment by the right side\n");
+                        //printf("Some segment touched inputted segment by the right side\n");
                     }
                 }
             }
@@ -363,14 +540,14 @@ int Intersections(Segment** Previous_Pointer, int print_code){
                 if (((tmp_y_1 >= y_1) && (tmp_y_2 <= y_2))){
                     Pointer_to_previous_node->pointer = Pointer_from_node;
                     if (print_code == 1){
-                        printf("Some segment lied inside the inputted segment\n");
+                        //printf("Some segment lied inside the inputted segment\n");
                     }
                 }
                 // II. if inputted segment lies inside the current segment:
                 if ((tmp_y_1 < y_1) && (tmp_y_2 > y_2)){
                     (*Previous_Pointer) = (*Previous_Pointer)->pointer;
                     if (print_code == 1){
-                        printf("Inputted segment lied inside one of the previous segments\n");
+                        //printf("Inputted segment lied inside one of the previous segments\n");
                     }
                 }
                 // III. if current segment touches inputted segment by the lower side:
@@ -378,7 +555,7 @@ int Intersections(Segment** Previous_Pointer, int print_code){
                     (*Previous_Pointer)->y_beg = tmp_y_1;
                     Pointer_to_previous_node->pointer = Pointer_from_node;
                     if (print_code == 1){
-                        printf("Some segment touched inputted segment by the lower side\n");
+                        //printf("Some segment touched inputted segment by the lower side\n");
                     }
                 }
                 // IV. if current segment touches inputted segment by the higher side:
@@ -386,7 +563,7 @@ int Intersections(Segment** Previous_Pointer, int print_code){
                     (*Previous_Pointer)->y_end = tmp_y_2;
                     Pointer_to_previous_node->pointer = Pointer_from_node;
                     if (print_code == 1){
-                        printf("Some segment touched inputted segment by the higher side\n");
+                        //printf("Some segment touched inputted segment by the higher side\n");
                     }
                 }
             }
@@ -440,7 +617,7 @@ int Autotest_Counter(void){
     Segment* Test_Pointer;
     int test_number = 0;
 
-    test_file = fopen("test.txt","r");
+    test_file = fopen("C:\\Users\\mihai\\Desktop\\progy\\test.txt","r");
     if (!test_file){
         printf("Error: cannot open autotest file\n");
         exit(-9);
@@ -475,7 +652,7 @@ int Autotest_Intersections(void){
     Segment* Test_Pointer;
     int number_of_segments = 0;
 
-    test_file = fopen("test.txt","r");
+    test_file = fopen("C:\\Users\\mihai\\Desktop\\progy\\test.txt","r");
     if (!test_file){
         printf("Error: cannot open autotest file\n");
         exit(-9);
@@ -505,7 +682,7 @@ int Autotest_Intersections(void){
 int main(void){
     Segment Root_Node;
     Segment* Previous_Pointer;
-    int status;
+    int status, node_count = 0;
 
     Autotest_Counter();
     Autotest_Intersections();
@@ -524,8 +701,14 @@ int main(void){
         if (status == 1){
             Input(&Previous_Pointer);
             Intersections(&Previous_Pointer, 1);
+            Intersections(&Previous_Pointer, 1);
         }
         if (status == 2){
+            node_count = Count(Previous_Pointer);
+            if (node_count == 0){
+                printf("Error: nothing to delete\n");
+                exit(-1);
+            }
             Delete_Segment(&Previous_Pointer);
         }
         if ((status != 3) && (status != 1) && (status != 2)){
