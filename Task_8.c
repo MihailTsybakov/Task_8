@@ -423,8 +423,7 @@ int Intersections(Segment** Previous_Pointer, int print_code){
     Pointer_to_previous_node = NULL;
 
     if (Pointer_from_node == NULL){
-        printf("Error: cannot compare, inputted segment is the only segment in the list\n");
-        exit(-4);
+        return 0;
     }
 
     x_1 = (*Previous_Pointer)->x_beg;
